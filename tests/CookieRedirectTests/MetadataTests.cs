@@ -58,6 +58,27 @@ public sealed class MetadataTests(AppFixture app, ITestOutputHelper output) : IC
     }
 
     /// <summary>
+    /// Why TypedResults.Ok and Results.Ok part company. The declared return type
+    /// of the first contributes metadata at build time; the second is declared
+    /// as IResult, which tells the request-delegate factory nothing.
+    /// </summary>
+    [Fact]
+    public void The_TypedResults_return_type_is_a_metadata_provider_and_IResult_is_not()
+    {
+        Assert.Contains(typeof(Microsoft.AspNetCore.Http.HttpResults.Ok<Thing>).GetInterfaces(),
+            i => i.Name.StartsWith("IEndpointMetadataProvider", StringComparison.Ordinal));
+
+        Assert.DoesNotContain(typeof(Microsoft.AspNetCore.Http.IResult).GetInterfaces(),
+            i => i.Name.StartsWith("IEndpointMetadataProvider", StringComparison.Ordinal));
+
+        // Results.Ok is declared as IResult, which is the whole difference.
+        Assert.Equal(typeof(Microsoft.AspNetCore.Http.IResult),
+            typeof(Microsoft.AspNetCore.Http.Results)
+                .GetMethod(nameof(Microsoft.AspNetCore.Http.Results.Ok), [typeof(object)])!
+                .ReturnType);
+    }
+
+    /// <summary>
     /// [ApiController] is not merely correlated with the mark. The attribute
     /// instance IS the metadata the cookie handler finds.
     /// </summary>

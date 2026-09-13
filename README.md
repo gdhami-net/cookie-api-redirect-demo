@@ -86,8 +86,8 @@ against your own app.
 ./check.sh          # or ./check.ps1 on Windows
 ```
 
-That runs the suite on both frameworks: 71 tests on `net9.0` and 92 on
-`net10.0`, 163 in total. Both runs must be green.
+That runs the suite on both frameworks: 72 tests on `net9.0` and 94 on
+`net10.0`, 166 in total. Both runs must be green.
 
 To see the tables above printed from a live run rather than copied from here:
 

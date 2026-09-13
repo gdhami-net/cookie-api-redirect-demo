@@ -100,6 +100,22 @@ public sealed class EndpointShapeTests(AppFixture app, ITestOutputHelper output)
         Assert.DoesNotContain((int)response.StatusCode, new[] { 302, 401, 403 });
     }
 
+    /// <summary>
+    /// The string-returning endpoint keeps redirecting because what it writes is
+    /// text/plain, not JSON. Worth asserting rather than asserting from the name.
+    /// </summary>
+    [Fact]
+    public async Task The_string_endpoint_writes_text_plain_and_the_object_one_writes_json()
+    {
+        var client = await app.SignedInClient("staff");
+
+        var text = await client.GetAsync("/min/string");
+        var json = await client.GetAsync("/min/plain-object");
+
+        Assert.Equal("text/plain", text.Content.Headers.ContentType?.MediaType);
+        Assert.Equal("application/json", json.Content.Headers.ContentType?.MediaType);
+    }
+
     [Fact]
     public async Task Print_the_table()
     {
